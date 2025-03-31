@@ -16,8 +16,9 @@
 .bar > li:before {
     position: absolute;
     content: "●";
-    color: darkblue;
+    color: var(--color, darkblue);
     font-size: 32px;
+    z-index: 1;
 }
 
 .bar > li:after {
@@ -27,7 +28,7 @@
     top: 0;
     bottom: 0;
     height: 100%;
-    border-left: 4px solid darkblue;
+    border-left: 4px solid var(--color, darkblue);
     content: "";
 }
 
