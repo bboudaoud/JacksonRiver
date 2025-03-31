@@ -230,7 +230,6 @@ function update() {
             const [dunlap, roseDale] = data;
             const aboveDunlapFlow = document.getElementById("Above_Dunlap_flow");
             const aboveDunalpLi = aboveDunlapFlow.parentElement.parentElement;
-            const aboveDunlapHeading = aboveDunlapFlow.parentElement.getElementsByClassName("siteLabel")[0];
             if (dunlap[0] != undefined && roseDale[0] != undefined) {
                 const flow = roseDale[0] - dunlap[0];
                 aboveDunlapFlow.textContent = `${flow} cfs`;
@@ -265,9 +264,8 @@ function update() {
         }
         const c = getMoomawColor(level);
         moomawLi.style = `--color: ${c}`;
-        for (let i = 0; i < moomawLi.children.length; i++) {
-            moomawLi.children[i].style.color = c;
-        }
+        moomawLevel.style.color = c;
+        moomawDiv.style.color = c;
     });
 }
 
