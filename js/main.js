@@ -55,7 +55,7 @@ for(const siteName in SITE_ID_LOOKUP){
     }
     if(siteName.includes("Gathright")){
         // This gets a special field
-        siteDiv.innerHTML += '<br><p class="siteData" id=Gathright_Dam_tmrwFlow style="color:gray">-- cfs</p>'
+        siteDiv.innerHTML += '<br><p class="siteData" id=Gathright_Dam_tmrwFlow style="color:gray">-- cfs tomorrow</p>'
     }
     if(siteName.includes("Moomaw")){
         siteDiv.innerHTML = `<h2 class="siteLabel">${siteName}</h2><p class="siteData" id="moomawLevel" style="color:gray">-- ft</p>`
