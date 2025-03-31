@@ -2,6 +2,10 @@
     font-family: "Open Sans";
 }
 
+h1 {
+    margin-left: 16px;
+}
+
 .bar {
     list-style: none;
     margin: 0;
