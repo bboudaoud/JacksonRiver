@@ -1,5 +1,5 @@
 * {
-    font-family: 'Open Sans';
+    font-family: "Open Sans";
 }
 
 .bar {
@@ -7,20 +7,20 @@
     margin: 0;
 }
 
-.bar >li {
+.bar > li {
     position: relative;
     margin: 0;
     padding: 10px 0;
 }
 
-.bar>li:before {
+.bar > li:before {
     position: absolute;
-    content: '●';
+    content: "●";
     color: darkblue;
     font-size: 32px;
 }
 
-.bar>li:after {
+.bar > li:after {
     position: absolute;
     margin-left: 8px;
     left: 0;
@@ -28,7 +28,7 @@
     bottom: 0;
     height: 100%;
     border-left: 4px solid darkblue;
-    content: '';
+    content: "";
 }
 
 /* .bar >li:first-of-type:after {
@@ -41,11 +41,11 @@
     padding-left: 24px;
 }
 
-.siteLabel{
+.siteLabel {
     margin: 0;
 }
 
-.siteData{
+.siteData {
     display: inline;
     padding-right: 16px;
 }

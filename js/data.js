@@ -92,7 +92,7 @@ export function getLatestValues(siteId) {
 
 // Gathright web page
 const GATHRIGHT_URL = "https://www.nao-wc.usace.army.mil/nao/projected_Q.html";
-export function getGathrightData(url=GATHRIGHT_URL) {
+export function getGathrightData(url = GATHRIGHT_URL) {
     return fetch(url).then(response => response.text()).then(
         text => {
             const parser = new DOMParser();
@@ -105,12 +105,12 @@ export function getGathrightData(url=GATHRIGHT_URL) {
     );
 }
 
-function _date_idx(date){
+function _date_idx(date) {
     return (Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()) - Date.UTC(date.getFullYear(), 0, 0)) / 24 / 60 / 60 / 1000 - 1;
 }
 
 const MOOMAW_URL = "https://moomaw.lakesonline.com/LevelDataJSON.asp?SiteID=VA006";
-export function getMoomawData(url=MOOMAW_URL){
+export function getMoomawData(url = MOOMAW_URL) {
     return fetch(url).then(response => response.json()).then(
         data => {
             const today = new Date();
