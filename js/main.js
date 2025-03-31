@@ -27,9 +27,11 @@ const FLOW_THRESH = {
 const HEIGHT_THRESH = {
     "Falling Spring": [4, 7, 9, 10],
 };
-const FLOW_COLORS = ["purple", "green", "darkorange", "red", "darkred"]
+const FLOW_COLORS = ["darkred", "green", "darkorange", "red", "magenta"]
 
 const MOOMAW_FULL_POOL = 1582.0;
+const MOOMAW_HIGH_LEVEL = 1587.0;
+const MOOMAW_LOW_LEVEL = 1572.0;
 const MOOMAW_FLOOD_POOL = 1610.0;
 
 const COLD_TEMP = 40;
@@ -64,6 +66,29 @@ for (const siteName in SITE_ID_LOOKUP) {
     // Add this element to the document
     li.appendChild(siteDiv);
     siteBar.appendChild(li);
+}
+
+function getMoomawColor(level) {
+    if (level == undefined) {
+        return "gray";
+    }
+    else if (level < MOOMAW_LOW_LEVEL) {
+        return "red";
+    }
+    else if (level < MOOMAW_FULL_POOL) {
+        return "darkorange";
+    }
+    else if (level < MOOMAW_HIGH_LEVEL) {
+        return "green";
+    }
+    else if (level < MOOMAW_FLOOD_POOL) {
+        // Lake is above high level
+        return "darkgreen";
+    }
+    else {
+        // Lake is above flood pool
+        return "darkred";
+    }
 }
 
 function getFlowHeightColor(siteName, flow, height) {
@@ -112,6 +137,9 @@ function update() {
     var roseDale = [undefined, undefined, undefined];
     for (const siteName in SITE_ID_LOOKUP) {
         const htmlName = siteName.replaceAll(" ", "_");
+        const siteHeading = document.getElementById(`${htmlName}_div`).getElementsByClassName("siteLabel")[0];
+        const siteLi = siteHeading.parentElement.parentElement;
+        console.log(siteLi);
         const siteId = SITE_ID_LOOKUP[siteName];
         if (siteId == undefined) {
             // Skip this for now (no site id)
@@ -147,17 +175,29 @@ function update() {
                 }
 
                 // Color these two together
+                let setSiteHeading = false;
                 if (flow != undefined || height != undefined) {
                     const c = getFlowHeightColor(siteName, flow, height);
-                    flowField.style.color = c;
-                    heightField.style.color = c;
+                    siteLi.style = `--color: ${c}`;
+                    for (let i = 0; i < siteLi.children.length; i++) {
+                        siteLi.children[i].style.color = c;
+                    }
+                    setSiteHeading = true;
                 }
 
                 if (temp != undefined) {
                     tempField.textContent = `${temp} °F`;
                     tempField.style.display = "inline";
-                    tempField.style.color = getTempColor(temp);
+                    const c = getTempColor(temp);
                     noData = false;
+                    if (!setSiteHeading) {
+                        siteLi.style = `--color: ${c}`;
+                        for (let i = 0; i < siteLi.children.length; i++) {
+                            siteLi.children[i].style.color = c;
+                        }
+                        setSiteHeading = true;
+                    }
+                    tempField.style.color = c;
                 }
                 else {
                     tempField.style.display = "none";
@@ -186,14 +226,20 @@ function update() {
                 return [dunlap, roseDale]
             }
         ).then(data => {
+            // Process fake "Above Dunlap" gauge, separate pass after data is fetched
             const [dunlap, roseDale] = data;
-            // Special updates (simulated gauge above dunlap)
             const aboveDunlapFlow = document.getElementById("Above_Dunlap_flow");
+            const aboveDunalpLi = aboveDunlapFlow.parentElement.parentElement;
+            const aboveDunlapHeading = aboveDunlapFlow.parentElement.getElementsByClassName("siteLabel")[0];
             if (dunlap[0] != undefined && roseDale[0] != undefined) {
                 const flow = roseDale[0] - dunlap[0];
                 aboveDunlapFlow.textContent = `${flow} cfs`;
                 aboveDunlapFlow.style.display = "inline";
-                aboveDunlapFlow.style.color = getFlowHeightColor("Above Dunlap", flow);
+                const c = getFlowHeightColor("Above Dunlap", flow);
+                aboveDunalpLi.style = `--color: ${c}`;
+                for (let i = 0; i < siteLi.children.length; i++) {
+                    aboveDunalpLi.children[i].style.color = c;
+                }
             }
             else {
                 aboveDunlapFlow.style.display = "none";
@@ -203,6 +249,8 @@ function update() {
 
     // Check for moomaw (special case)
     Data.getMoomawData().then(level => {
+        const moomawDiv = document.getElementById("Lake_Moomaw_div");
+        const moomawLi = moomawDiv.parentElement;
         const moomawLevel = document.getElementById("moomawLevel");
         moomawLevel.textContent = `${level} ft`
         const diff = 100 * Math.round((level - MOOMAW_FULL_POOL) / 100);
@@ -214,6 +262,11 @@ function update() {
         }
         else {
             moomawLevel.textContent += " (@ full pool)";
+        }
+        const c = getMoomawColor(level);
+        moomawLi.style = `--color: ${c}`;
+        for (let i = 0; i < moomawLi.children.length; i++) {
+            moomawLi.children[i].style.color = c;
         }
     });
 }
