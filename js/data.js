@@ -93,7 +93,11 @@ export function getLatestValues(siteId) {
 // Gathright web page
 const GATHRIGHT_URL = "https://www.nao-wc.usace.army.mil/nao/projected_Q.html";
 export function getGathrightData(url = GATHRIGHT_URL) {
-    return fetch(url).then(response => response.text()).then(
+    return fetch(url, {
+        headers: {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36",
+        }
+    }).then(response => response.text()).then(
         text => {
             const parser = new DOMParser();
             const doc = parser.parseFromString(text, "text/html");
@@ -111,11 +115,24 @@ function _date_idx(date) {
 
 const MOOMAW_URL = "https://moomaw.lakesonline.com/LevelDataJSON.asp?SiteID=VA006";
 export function getMoomawData(url = MOOMAW_URL) {
-    return fetch(url).then(response => response.json()).then(
+    return fetch(url, {
+        headers: {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36",
+        }
+    }).then(response => response.json()).then(
         data => {
             const today = new Date();
-            const todayLevel = data.charts[_date_idx(today)][today.getFullYear()];
-            return todayLevel;
+            let date_idx = _date_idx(today);
+            // Find the most recent date that has a height measurement here
+            while (date_idx >= 0) {
+                let latestFlow = data.charts[date_idx][today.getFullYear()];
+                if (latestFlow != undefined) {
+                    return latestFlow;
+                }
+                // If the latest flow is none, try the day before
+                date_idx--;
+            }
+            return data.charts[0][today.getFullYear()];
         }
     )
 }
