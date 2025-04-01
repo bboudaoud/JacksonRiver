@@ -139,7 +139,6 @@ function update() {
         const htmlName = siteName.replaceAll(" ", "_");
         const siteHeading = document.getElementById(`${htmlName}_div`).getElementsByClassName("siteLabel")[0];
         const siteLi = siteHeading.parentElement.parentElement;
-        console.log(siteLi);
         const siteId = SITE_ID_LOOKUP[siteName];
         if (siteId == undefined) {
             // Skip this for now (no site id)
