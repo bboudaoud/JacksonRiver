@@ -8,8 +8,8 @@ const siteBar = document.getElementById("siteBar");
 // Sites used for USGS data
 const SITE_ID_LOOKUP = {
     "Bacova": "02011400",
-    "Gathright Dam": "02011800",
     "Lake Moomaw": undefined,
+    "Gathright Dam": "02011800",
     "Falling Spring": "02012500",
     "Water Filtration Plant": "02012800",
     "Above Dunlap": undefined,
