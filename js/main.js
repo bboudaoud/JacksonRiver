@@ -7,25 +7,25 @@ const siteBar = document.getElementById("siteBar");
 
 // Sites used for USGS data
 const SITE_ID_LOOKUP = {
-    "Bacova": "02011400",
+    "At Bacova": "02011400",
     "Lake Moomaw": undefined,
-    "Gathright Dam": "02011800",
-    "Falling Spring": "02012500",
-    "Water Filtration Plant": "02012800",
-    "Above Dunlap": undefined,
+    "Below Gathright Dam": "02011800",
+    "At Falling Spring": "02012500",
+    "At Water Filtration Plant": "02012800",
+    "Above Dunlap Creek": undefined,
     "Dunlap Creek": "02013000",
-    "Rose Dale": "02013100",
+    "At Rose Dale": "02013100",
 };
 
 const FLOW_THRESH = {
-    "Bacova": [100, 300, 500, 800],
-    "Gathright Dam": [200, 800, 1000, 3000],
-    "Above Dunlap": [200, 800, 1000, 3000],
+    "At Bacova": [100, 300, 500, 800],
+    "Below Gathright Dam": [200, 800, 1000, 3000],
+    "Above Dunlap Creek": [200, 800, 1000, 3000],
     "Dunlap Creek": [50, 300, 500, 1000],
-    "Rose Dale": [200, 600, 1000, 3000],
+    "At Rose Dale": [200, 600, 1000, 3000],
 };
 const HEIGHT_THRESH = {
-    "Falling Spring": [4, 7, 9, 10],
+    "At Falling Spring": [4, 7, 9, 10],
 };
 const FLOW_COLORS = ["darkred", "green", "darkorange", "red", "magenta"]
 
@@ -227,13 +227,13 @@ function update() {
         ).then(data => {
             // Process fake "Above Dunlap" gauge, separate pass after data is fetched
             const [dunlap, roseDale] = data;
-            const aboveDunlapFlow = document.getElementById("Above_Dunlap_flow");
+            const aboveDunlapFlow = document.getElementById("Above_Dunlap_Creek_flow");
             const aboveDunalpLi = aboveDunlapFlow.parentElement.parentElement;
             if (dunlap[0] != undefined && roseDale[0] != undefined) {
                 const flow = roseDale[0] - dunlap[0];
                 aboveDunlapFlow.textContent = `${flow} cfs`;
                 aboveDunlapFlow.style.display = "inline";
-                const c = getFlowHeightColor("Above Dunlap", flow);
+                const c = getFlowHeightColor("Above Dunlap Creek", flow);
                 aboveDunalpLi.style = `--color: ${c}`;
                 for (let i = 0; i < siteLi.children.length; i++) {
                     aboveDunalpLi.children[i].style.color = c;
