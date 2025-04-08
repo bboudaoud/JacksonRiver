@@ -66,7 +66,7 @@ for (const siteName in SITE_ID_LOOKUP) {
         siteDiv.innerHTML = `<h2 class="siteLabel">${siteName}</h2>
         <p class="siteData" id=${htmlName}_flow>-- cfs</p>`
     }
-    
+
     // Custom tweaking for certain sites
     if (!(siteName.includes("Above Dunlap"))) {
         // Everything but Above Dunlap gets all fields (for now)
@@ -231,6 +231,9 @@ function update() {
                     Data.getGathrightData().then(tomorrowFlow => {
                         const tmrwFlow = document.getElementById("Gathright_Dam_tmrwFlow")
                         tmrwFlow.textContent = `${tomorrowFlow} tomorrow`;
+                        // Get just the number and color code
+                        const tmrwFlowVal = tomorrowFlow.split(" ")[0];
+                        tmrwFlow.style.color = getFlowHeightColor("Below Gathright Dam", tmrwFlowVal);
                     });
                 }
 
