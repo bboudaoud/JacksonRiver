@@ -1,7 +1,7 @@
 "use strict";
 
 // Gets a URL for other gauge site
-export function gaugeUrl(state, siteId, periodDays=30) {
+export function gaugeUrl(state, siteId, periodDays = 30) {
     return `https://bboudaoud.github.io/USGS-StreamView/gaugeSite.html?state=${state}&site_id=${siteId}&periodDays=${periodDays}`;
 }
 
