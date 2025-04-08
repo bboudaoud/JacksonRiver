@@ -39,7 +39,7 @@ const MID_TEMP = 60;
 const WARM_TEMP = 65;
 const HOT_TEMP = 70;
 
-// Populate site bar
+// Populate site list
 for (const siteName in SITE_ID_LOOKUP) {
     const htmlName = siteName.replaceAll(" ", "_");
     let li = document.createElement("li");
@@ -47,9 +47,27 @@ for (const siteName in SITE_ID_LOOKUP) {
     siteDiv.id = `${htmlName}_div`;
     siteDiv.className = "siteDiv";
     // This indicates this is a simulated gauge, only do flow
-    siteDiv.innerHTML = `<h2 class="siteLabel">${siteName}</h2>
-    <p class="siteData" id=${htmlName}_flow>-- cfs</p>`
+    let siteUrl = undefined
+    const siteId = SITE_ID_LOOKUP[siteName]
+    if (siteId != undefined) {
+        siteUrl = Data.gaugeUrl("VA", siteId)
+    }
+    if (siteName == "Below Gathright Dam") {
+        // Override the site here w/ army corps page
+        siteUrl = Data.GATHRIGHT_URL;
+    }
 
+    // Create header w/ or w/o link
+    if (siteUrl != undefined) {
+        siteDiv.innerHTML = `<h2 class="siteLabel"><a href=${siteUrl} target="_blank">${siteName}</a></h2>
+        <p class="siteData" id=${htmlName}_flow>-- cfs</p>`
+    }
+    else {
+        siteDiv.innerHTML = `<h2 class="siteLabel">${siteName}</h2>
+        <p class="siteData" id=${htmlName}_flow>-- cfs</p>`
+    }
+    
+    // Custom tweaking for certain sites
     if (!(siteName.includes("Above Dunlap"))) {
         // Everything but Above Dunlap gets all fields (for now)
         siteDiv.innerHTML += `<p class="siteData" id=${htmlName}_height>-- ft</p>
@@ -59,8 +77,10 @@ for (const siteName in SITE_ID_LOOKUP) {
         // This gets a special field
         siteDiv.innerHTML += '<br><p class="siteData" id=Gathright_Dam_tmrwFlow style="color:gray">-- cfs tomorrow</p>'
     }
+
+    // Special override for Moomaw here
     if (siteName.includes("Moomaw")) {
-        siteDiv.innerHTML = `<h2 class="siteLabel">${siteName}</h2><p class="siteData" id="moomawLevel" style="color:gray">-- ft</p>`
+        siteDiv.innerHTML = `<h2 class="siteLabel"><a href=${Data.MOOMAW_URL} target="_blank">${siteName}</a></h2><p class="siteData" id="moomawLevel" style="color:gray">-- ft</p>`
     }
 
     // Add this element to the document

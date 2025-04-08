@@ -1,5 +1,10 @@
 "use strict";
 
+// Gets a URL for other gauge site
+export function gaugeUrl(state, siteId, periodDays=30) {
+    return `https://bboudaoud.github.io/USGS-StreamView/gaugeSite.html?state=${state}&site_id=${siteId}&periodDays=${periodDays}`;
+}
+
 // Utility method for reading a time series below
 function _get_time_series(data, varName) {
     const timeSeries = data.value.timeSeries;
@@ -94,8 +99,10 @@ export function getLatestValues(siteId) {
 const CORS_PROXY = "https://corsproxy.io/?url="
 
 // Gathright web page
-const GATHRIGHT_URL = CORS_PROXY + "https://www.nao-wc.usace.army.mil/nao/projected_Q.html";
-export function getGathrightData(url = GATHRIGHT_URL) {
+export const GATHRIGHT_URL = "https://www.nao-wc.usace.army.mil/nao/projected_Q.html"
+// This is requred to get data from the source above
+const GATHRIGHT_PROXY = CORS_PROXY + GATHRIGHT_URL;
+export function getGathrightData(url = GATHRIGHT_PROXY) {
     return fetch(url).then(response => response.text()).then(
         text => {
             const parser = new DOMParser();
@@ -112,8 +119,12 @@ function _date_idx(date) {
     return (Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()) - Date.UTC(date.getFullYear(), 0, 0)) / 24 / 60 / 60 / 1000 - 1;
 }
 
-const MOOMAW_URL = CORS_PROXY + "https://moomaw.lakesonline.com/LevelDataJSON.asp?SiteID=VA006";
-export function getMoomawData(url = MOOMAW_URL) {
+// This is the user visitable site
+export const MOOMAW_URL = "https://moomaw.lakesonline.com/Level/";
+// This gets raw JSON/works around CORS
+const MOOMAW_JSON_URL = "https://moomaw.lakesonline.com/LevelDataJSON.asp?SiteID=VA006";
+const MOOMAW_PROXY = CORS_PROXY + MOOMAW_JSON_URL;
+export function getMoomawData(url = MOOMAW_PROXY) {
     return fetch(url).then(response => response.json()).then(
         data => {
             const today = new Date();
