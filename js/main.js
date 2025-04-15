@@ -231,8 +231,21 @@ function update() {
                     Data.getGathrightData().then(tomorrowFlow => {
                         const tmrwFlow = document.getElementById("Gathright_Dam_tmrwFlow")
                         tmrwFlow.textContent = `${tomorrowFlow} tomorrow`;
-                        // Get just the number and color code
-                        const tmrwFlowVal = tomorrowFlow.split(" ")[0];
+                        // Get just the number and color code (this could be a X-Y string, if so average it)
+                        const tmrwFlowVals = tomorrowFlow.split(" ")[0].split("-");
+                        let tmrwFlowVal = 0;
+                        if (tmrwFlowVals.length == 1) {
+                            // Single value
+                            tmrwFlowVal = parseFloat(tmrwFlowVals[0]);
+                        }
+                        else if (tmrwFlowVals.length == 2) {
+                            // X-Y range
+                            tmrwFlowVal = (parseFloat(tmrwFlowVals[0]) + parseFloat(tmrwFlowVals[1])) / 2;
+                        }
+                        else {
+                            // No fields or more than 2 "-" separated fields detected
+                            console.warn("Unknown Gathright predicted flow value: ", tmrwFlow, tmrwFlowVals)
+                        }
                         tmrwFlow.style.color = getFlowHeightColor("Below Gathright Dam", tmrwFlowVal);
                     });
                 }
