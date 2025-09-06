@@ -287,12 +287,13 @@ function update() {
         const moomawLi = moomawDiv.parentElement;
         const moomawLevel = document.getElementById("moomawLevel");
         moomawLevel.textContent = `${level} ft`
-        const diff = 100 * Math.round((level - MOOMAW_FULL_POOL) / 100);
+        // Get the difference between the level and the full pool
+        const diff = (level - MOOMAW_FULL_POOL).toFixed(2);
         if (diff > 0) {
             moomawLevel.textContent += ` (${diff} ft above full pool)`;
         }
         else if (diff < 0) {
-            moomawLevel.textContent += ` (${diff} ft below full pool)`;
+            moomawLevel.textContent += ` (${-diff} ft below full pool)`;
         }
         else {
             moomawLevel.textContent += " (@ full pool)";
