@@ -2,8 +2,36 @@
     font-family: "Open Sans";
 }
 
+body {
+    margin: 0;
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #f5f5f5;
+}
+
 h1 {
-    margin-left: 16px;
+    margin: 0 0 28px 0;
+    color: #333;
+    text-align: center;
+}
+
+#statusDiv {
+    box-sizing: border-box;
+    max-width: 900px;
+    width: 100%;
+    margin: 0 auto;
+}
+
+.bar {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    list-style: none;
+    margin: 0;
+    padding: 0;
 }
 
 a,
@@ -14,39 +42,292 @@ a:active {
     text-decoration: none;
 }
 
-.bar {
-    list-style: none;
-    margin: 0;
-}
-
 .bar > li {
     position: relative;
     margin: 0;
     padding: 10px 0;
+    width: 100%;
+    max-width: 440px;
 }
 
-.bar > li:before {
+/* Shared stem line (regular, inflow, terminal) */
+.bar > li:not(.fork-container):not(.lake-container):not(.inflow-container):not(.terminal-container):after,
+.bar > li.inflow-container:after,
+.bar > li.terminal-container:after {
     position: absolute;
-    content: "●";
-    color: var(--color, darkblue);
-    font-size: 32px;
-    z-index: 1;
-}
-
-.bar > li:after {
-    position: absolute;
-    margin-left: 8px;
-    left: 0;
+    left: 50%;
+    transform: translateX(-50%);
     top: 0;
-    bottom: 0;
-    height: 100%;
     border-left: 4px solid var(--color, darkblue);
     content: "";
 }
 
-/* .bar >li:first-of-type:after {
-    top: 20%;
-} */
+.bar > li:not(.fork-container):not(.lake-container):not(.inflow-container):not(.terminal-container):after,
+.bar > li.inflow-container:after {
+    bottom: 0;
+    height: 100%;
+}
+
+.bar > li.inflow-container:after {
+    z-index: 0;
+}
+
+/* Terminal: same center line, but stops at the dot */
+.bar > li.terminal-container:after {
+    bottom: auto;
+    /* li padding-top (14px) + half the siteLabel height (~1.2em) */
+    height: calc(14px + 0.6em);
+}
+
+/* Fork - SVG Y junction */
+.fork-container {
+    position: relative;
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 10px 0 0 0;
+}
+
+.fork {
+    position: relative;
+    width: 100%;
+    height: 80px;
+}
+
+.fork-lines {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    width: 200px;
+    height: 80px;
+    transform: translateX(-50%);
+    overflow: visible;
+    z-index: 1;
+    pointer-events: none;
+}
+
+.fork-lines .fork-line {
+    stroke: var(--color, darkblue);
+    stroke-width: 4;
+    stroke-linecap: round;
+    fill: none;
+}
+
+.fork-lines .fork-line.stem {
+    stroke: darkblue;
+}
+
+.fork-lines .fork-dot {
+    fill: var(--color, darkblue);
+}
+
+.branch {
+    position: absolute;
+    top: 16px;
+    width: 180px;
+}
+
+.branch.left {
+    right: calc(50% + 54px);
+    text-align: right;
+}
+
+.branch.right {
+    left: calc(50% + 54px);
+    text-align: left;
+}
+
+.branch .siteDiv {
+    margin: 0;
+    padding: 0;
+    transform: translateY(-50%);
+}
+
+.branch .siteStats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px 12px;
+    margin-top: 2px;
+}
+
+.branch.left .siteStats {
+    justify-content: flex-end;
+}
+
+.branch.right .siteStats {
+    justify-content: flex-start;
+}
+
+.branch .siteData {
+    padding-right: 0;
+}
+
+/* Name left of line, stats right -- grid keeps both in flow */
+.bar > li:not(.fork-container):not(.lake-container):not(.inflow-container) {
+    padding: 14px 0;
+}
+
+.bar > li:not(.fork-container):not(.lake-container):not(.inflow-container) .siteDiv {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 32px minmax(0, 1fr);
+    align-items: start;
+    margin: 0;
+    padding: 0;
+}
+
+.bar > li:not(.fork-container):not(.lake-container):not(.inflow-container) .siteLabel {
+    position: relative;
+    grid-column: 1;
+    text-align: right;
+    padding-right: 8px;
+}
+
+.bar > li:not(.fork-container):not(.lake-container):not(.inflow-container) .siteLabel:after {
+    position: absolute;
+    content: "";
+    right: -23px;
+    top: 50%;
+    width: 14px;
+    height: 14px;
+    background: var(--color, darkblue);
+    border-radius: 50%;
+    transform: translateY(-50%);
+    z-index: 1;
+}
+
+.bar > li:not(.fork-container):not(.lake-container):not(.inflow-container) .siteStats {
+    grid-column: 3;
+    align-self: center;
+    text-align: left;
+    padding-left: 8px;
+}
+
+/* Lake styling - bucket */
+.lake-container {
+    position: relative;
+    margin-top: -10px;
+}
+
+.lake-container .siteDiv {
+    box-sizing: border-box;
+    width: calc(100% - 16px);
+    background: linear-gradient(to bottom, #e3f2fd 0%, #1976d2 100%);
+    border-radius: 0 0 20px 20px;
+    border: 3px solid #1565c0;
+    border-top: none;
+    padding: 20px;
+    margin: 0 auto;
+    max-width: 340px;
+    position: relative;
+    text-align: center;
+}
+
+.lake-container .siteDiv:before {
+    /* Bucket rim */
+    content: "";
+    position: absolute;
+    top: -8px;
+    left: -8px;
+    right: -8px;
+    height: 8px;
+    background: #1565c0;
+    border-radius: 4px 4px 0 0;
+}
+
+.lake-fill {
+    position: relative;
+    width: 100%;
+    height: 40px;
+    background: rgba(255,255,255,0.3);
+    border-radius: 4px;
+    margin-top: 10px;
+    overflow: hidden;
+}
+
+.fill-percentage {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    background: rgba(255,255,255,0.8);
+    color: #1565c0;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: width 0.3s ease;
+    min-width: 60px;
+}
+
+/* Inflow styling - tributary joining main */
+.inflow-container {
+    position: relative;
+    width: 100%;
+}
+
+.inflow {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: start;
+    padding: 4px 0;
+    position: relative;
+}
+
+.tributary {
+    box-sizing: border-box;
+    position: relative;
+    grid-column: 2;
+    display: grid;
+    /* stem-dot | arrow+gap | text */
+    grid-template-columns: 14px 32px minmax(0, 1fr);
+    grid-template-rows: auto auto;
+    align-items: center;
+    padding: 0;
+}
+
+.tributary .siteDiv {
+    display: contents;
+}
+
+.inflow-junction {
+    grid-column: 1;
+    grid-row: 1;
+    position: relative;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--color, darkblue);
+    /* Center the dot on the stem (= left edge of this column) */
+    margin-left: -7px;
+    z-index: 2;
+}
+
+.inflow-junction:before {
+    /* Creek-colored arrow from just outside the dot to the name */
+    position: absolute;
+    content: "";
+    left: 12px;
+    top: 50%;
+    width: 32px;
+    height: 12px;
+    background: var(--tributary-color, darkblue);
+    clip-path: polygon(0 50%, 12px 0, 12px 4px, 100% 4px, 100% 8px, 12px 8px, 12px 100%);
+    transform: translateY(-50%);
+}
+
+.tributary .siteLabel {
+    grid-column: 3;
+    grid-row: 1;
+    position: relative;
+    z-index: 1;
+    margin: 0;
+    white-space: nowrap;
+}
+
+.tributary .siteStats {
+    grid-column: 3;
+    grid-row: 2;
+}
 
 .siteDiv {
     margin: 0 8px;
@@ -56,9 +337,17 @@ a:active {
 
 .siteLabel {
     margin: 0;
+    font-size: 1.2em;
 }
 
 .siteData {
     display: inline;
+    margin: 0;
     padding-right: 16px;
+    white-space: nowrap;
+}
+
+#Gathright_Dam_tmrwFlow {
+    display: inline-block;
+    white-space: pre-line;
 }
