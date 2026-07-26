@@ -7,6 +7,8 @@ html,
 body {
     max-width: 100%;
     overflow-x: hidden;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
 }
 
 body {
@@ -149,6 +151,14 @@ a:active {
     margin: 0;
     padding: 0;
     transform: translateY(-50%);
+}
+
+.branch.left .siteDiv {
+    padding-right: 8px;
+}
+
+.branch.right .siteDiv {
+    padding-left: 8px;
 }
 
 .branch .siteStats {
@@ -360,7 +370,7 @@ a:active {
     white-space: pre-line;
 }
 
-@media (max-width: 480px) {
+@media (max-width: 520px) {
     body {
         padding: 4px;
         font-size: 14px;
@@ -374,27 +384,44 @@ a:active {
         max-width: 100%;
     }
 
-    /* Scale the Y so dots sit closer to center and leave room for labels */
+    /* Scale the Y proportionally while keeping its stroke equal to the river line */
+    .fork {
+        height: 48px;
+    }
+
     .fork-lines {
-        width: 140px;
+        width: 120px;
+        height: 48px;
+    }
+
+    .fork-lines .fork-line {
+        vector-effect: non-scaling-stroke;
     }
 
     .branch {
-        /* Keep right/left edges clear of the dots without leaving the viewport */
-        width: calc(50% - 42px);
+        top: 10px;
+        width: calc(50% - 48px);
         max-width: none;
     }
 
     .branch.left {
-        right: calc(50% + 38px);
+        right: calc(50% + 44px);
     }
 
     .branch.right {
-        left: calc(50% + 38px);
+        left: calc(50% + 44px);
+    }
+
+    .branch.left .siteDiv {
+        padding-right: 10px;
+    }
+
+    .branch.right .siteDiv {
+        padding-left: 10px;
     }
 
     .siteLabel {
-        font-size: 1.05em;
+        font-size: 1.25em;
     }
 
     .siteData {
