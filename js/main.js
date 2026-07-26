@@ -45,7 +45,7 @@ const FLOW_THRESH = {
     "Upper James": [500, 1500, 2000, 3000],
 };
 const HEIGHT_THRESH = {
-    "Falling Spring": [4, 7, 9, 10],
+    "Falling Spring": [3.5, 7, 9, 10],
 };
 const FLOW_COLORS = ["darkred", "green", "darkorange", "red", "magenta"]
 
