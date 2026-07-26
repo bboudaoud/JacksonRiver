@@ -132,16 +132,16 @@ a:active {
     position: absolute;
     top: 16px;
     width: 180px;
-    max-width: calc(50% - 40px);
+    max-width: calc(50% - 54px);
 }
 
 .branch.left {
-    right: calc(50% + 36px);
+    right: calc(50% + 48px);
     text-align: right;
 }
 
 .branch.right {
-    left: calc(50% + 36px);
+    left: calc(50% + 48px);
     text-align: left;
 }
 
@@ -361,24 +361,47 @@ a:active {
 }
 
 @media (max-width: 480px) {
+    body {
+        padding: 4px;
+        font-size: 14px;
+    }
+
+    h1 {
+        margin-bottom: 20px;
+    }
+
     .fork-container {
         max-width: 100%;
     }
 
+    /* Scale the Y so dots sit closer to center and leave room for labels */
+    .fork-lines {
+        width: 140px;
+    }
+
     .branch {
-        width: calc(50% - 28px);
+        /* Keep right/left edges clear of the dots without leaving the viewport */
+        width: calc(50% - 42px);
         max-width: none;
     }
 
     .branch.left {
-        right: calc(50% + 24px);
+        right: calc(50% + 38px);
     }
 
     .branch.right {
-        left: calc(50% + 24px);
+        left: calc(50% + 38px);
     }
 
     .siteLabel {
         font-size: 1.05em;
+    }
+
+    .siteData {
+        padding-right: 8px;
+    }
+
+    .branch .siteStats {
+        gap: 2px 6px;
     }
 }
