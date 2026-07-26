@@ -1,5 +1,12 @@
 * {
+    box-sizing: border-box;
     font-family: "Open Sans";
+}
+
+html,
+body {
+    max-width: 100%;
+    overflow-x: hidden;
 }
 
 body {
@@ -125,15 +132,16 @@ a:active {
     position: absolute;
     top: 16px;
     width: 180px;
+    max-width: calc(50% - 40px);
 }
 
 .branch.left {
-    right: calc(50% + 54px);
+    right: calc(50% + 36px);
     text-align: right;
 }
 
 .branch.right {
-    left: calc(50% + 54px);
+    left: calc(50% + 36px);
     text-align: left;
 }
 
@@ -350,4 +358,27 @@ a:active {
 #Gathright_Dam_tmrwFlow {
     display: inline-block;
     white-space: pre-line;
+}
+
+@media (max-width: 480px) {
+    .fork-container {
+        max-width: 100%;
+    }
+
+    .branch {
+        width: calc(50% - 28px);
+        max-width: none;
+    }
+
+    .branch.left {
+        right: calc(50% + 24px);
+    }
+
+    .branch.right {
+        left: calc(50% + 24px);
+    }
+
+    .siteLabel {
+        font-size: 1.05em;
+    }
 }
