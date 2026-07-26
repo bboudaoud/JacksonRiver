@@ -373,7 +373,7 @@ a:active {
 @media (max-width: 520px) {
     body {
         padding: 4px;
-        font-size: 14px;
+        font-size: 1.0em;
     }
 
     h1 {
@@ -421,7 +421,7 @@ a:active {
     }
 
     .siteLabel {
-        font-size: 1.25em;
+        font-size: 1.5em;
     }
 
     .siteData {
