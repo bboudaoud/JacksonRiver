@@ -1,0 +1,104 @@
+{
+  "title": "Jackson Dashboard",
+  "heading": "Jackson River",
+
+  "defaults": {
+    "state": "VA",
+    "refreshSeconds": 300,
+    "tempThresholds": {
+      "cold": 40,
+      "cool": 60,
+      "warm": 65,
+      "hot": 70,
+      "extreme": 75
+    }
+  },
+  
+  "structure": [
+    {
+      "type": "fork",
+      "branches": [
+        {
+          "name": "Back Creek",
+          "siteId": "02011460",
+          "flowThresholds": [50, 200, 400, 600]
+        },
+        {
+          "name": "Bacova",
+          "siteId": "02011400",
+          "flowThresholds": [100, 300, 500, 800]
+        }
+      ]
+    },
+    {
+      "type": "lake",
+      "name": "Lake Moomaw",
+      "source": "moomaw",
+      "url": "https://moomaw.lakesonline.com/Level/",
+      "pool": {
+        "full": 1582.0,
+        "high": 1587.0,
+        "low": 1572.0,
+        "flood": 1610.0,
+        "fullStorageAcFt": 123700,
+        "surfaceAcres": 2530
+      }
+    },
+    {
+      "name": "Gathright Dam",
+      "source": "gathright",
+      "siteId": "02011800",
+      "url": "https://www.nao-wc.usace.army.mil/nao/projected_Q.html",
+      "flowThresholds": [200, 800, 1000, 3000],
+      "extra": {
+        "placeholder": "-- projected"
+      }
+    },
+    {
+      "name": "Falling Spring",
+      "siteId": "02012500",
+      "heightThresholds": [3.5, 7, 9, 10]
+    },
+    {
+      "name": "Filtration Plant",
+      "siteId": "02012800"
+    },
+    {
+      "name": "Above Dunlap",
+      "compute": {
+        "add": ["02013100"],
+        "subtract": ["02013000"]
+      },
+      "flowThresholds": [200, 800, 1000, 3000],
+      "showHeight": false,
+      "showTemp": false
+    },
+    {
+      "type": "inflow",
+      "tributary": {
+        "name": "Dunlap Creek",
+        "siteId": "02013000",
+        "flowThresholds": [50, 200, 500, 1000]
+      }
+    },
+    {
+      "name": "Rose Dale",
+      "siteId": "02013100",
+      "flowThresholds": [200, 600, 1000, 3000]
+    },
+    {
+      "type": "inflow",
+      "tributary": {
+        "name": "Potts Creek",
+        "siteId": "02014000",
+        "flowThresholds": [50, 200, 500, 1000]
+      }
+    },
+    {
+      "type": "terminal",
+      "name": "Upper James",
+      "siteId": "02016500",
+      "flowThresholds": [500, 1500, 2000, 3000]
+    }
+  ]
+}
