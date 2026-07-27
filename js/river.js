@@ -1,27 +1,32 @@
 "use strict";
 
 // Default colors
-let FLOW_COLORS = {
+const DEFAULT_FLOW_COLORS = {
     low: "darkred",
     okay: "green",
     elevated: "darkorange",
     high: "red",
     flood: "magenta",
 };
-let LAKE_COLORS = {
+const DEFAULT_LAKE_COLORS = {
     low: "red",
     full: "darkorange",
     high: "green",
     flood: "darkgreen",
     above: "darkred",
 };
-let TEMP_COLORS = {
+const DEFAULT_TEMP_COLORS = {
     cold: "blue",
     cool: "green",
     warm: "darkorange",
     hot: "red",
     extreme: "darkred",
 };
+
+// Working colors, reset from defaults on each startDashboard call
+let FLOW_COLORS;
+let LAKE_COLORS;
+let TEMP_COLORS;
 let DEFAULT_TEMP_THRESH;
 
 let listElement;
@@ -51,16 +56,10 @@ export async function startDashboard(configFile, customGetter, root = document.b
     listElement.className = "bar";
     root.appendChild(listElement);
 
-    // Override default colors from the config
-    if (defaults.flowColors != undefined) {
-        FLOW_COLORS = defaults.flowColors;
-    }
-    if (defaults.lakeColors != undefined) {
-        LAKE_COLORS = defaults.lakeColors;
-    }
-    if (defaults.tempColors != undefined) {
-        TEMP_COLORS = defaults.tempColors;
-    }
+    // Reset colors from defaults, overriding from the config when provided
+    FLOW_COLORS = defaults.flowColors || DEFAULT_FLOW_COLORS;
+    LAKE_COLORS = defaults.lakeColors || DEFAULT_LAKE_COLORS;
+    TEMP_COLORS = defaults.tempColors || DEFAULT_TEMP_COLORS;
     DEFAULT_TEMP_THRESH = defaults.tempThresholds;
     getCustomData = customGetter;
 
@@ -212,12 +211,13 @@ function applyLakeData(site, data) {
         fillPercentage.textContent = `${Math.max(0, percentage).toFixed(0)}%`;
         fillPercentage.style.width = `${Math.max(0, Math.min(100, percentage))}%`;
 
-        const diff = (level - pool.full).toFixed(2);
+        const diff = level - pool.full;
+        const diffText = diff.toFixed(2);
         if (diff > 0) {
-            levelField.textContent += ` (+${diff} ft)`;
+            levelField.textContent += ` (+${diffText} ft)`;
         }
         else if (diff < 0) {
-            levelField.textContent += ` (${diff} ft)`;
+            levelField.textContent += ` (${diffText} ft)`;
         }
         else {
             levelField.textContent += " (@ full pool)";
@@ -507,17 +507,25 @@ function getMainColor(item) {
     return siteDiv ? siteDiv.dataset.statusColor : undefined;
 }
 
+const rgbCache = new Map();
+let rgbProbe;
+
 function parseRgb(color) {
-    const probe = document.createElement("span");
-    probe.style.color = color;
-    document.body.appendChild(probe);
-    const computed = getComputedStyle(probe).color;
-    document.body.removeChild(probe);
-    const match = computed.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
-    if (!match) {
-        return undefined;
+    if (rgbCache.has(color)) {
+        return rgbCache.get(color);
     }
-    return [Number(match[1]), Number(match[2]), Number(match[3])];
+    if (rgbProbe == undefined) {
+        rgbProbe = document.createElement("span");
+        rgbProbe.style.display = "none";
+        document.body.appendChild(rgbProbe);
+    }
+    rgbProbe.style.color = color;
+    const match = getComputedStyle(rgbProbe).color.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+    const rgb = match
+        ? [Number(match[1]), Number(match[2]), Number(match[3])]
+        : undefined;
+    rgbCache.set(color, rgb);
+    return rgb;
 }
 
 function blendColors(colorA, colorB, amount) {

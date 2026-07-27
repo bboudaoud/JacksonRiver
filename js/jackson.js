@@ -3,18 +3,18 @@
 import { parseFlowNumber, cfsOnly } from "./river.js";
 
 // Use this to avoid CORS issues from the sites below
-const CORS_PROXY = "https://corsproxy.io/?url="
+const CORS_PROXY = "https://corsproxy.io/?url=";
 
 // Gathright projected releases
-const GATHRIGHT_URL = "https://www.nao-wc.usace.army.mil/nao/projected_Q.html"
+const GATHRIGHT_URL = "https://www.nao-wc.usace.army.mil/nao/projected_Q.html";
 const GATHRIGHT_PROXY = CORS_PROXY + GATHRIGHT_URL;
 
-function _format_gathright_date(dateText) {
+function formatGathrightDate(dateText) {
     const date = new Date(`${dateText.slice(0, 2)} ${dateText.slice(2, 5)} ${dateText.slice(5)}`);
     return `${date.getMonth() + 1}/${date.getDate()}`;
 }
 
-function _format_gathright_schedule(dates, flows) {
+function formatGathrightSchedule(dates, flows) {
     if (dates.length === 0 || flows.length === 0) {
         return { text: "--", value: undefined };
     }
@@ -25,11 +25,11 @@ function _format_gathright_schedule(dates, flows) {
     let text;
     if (allAgree) {
         // e.g. "246 cfs until 7/27"
-        text = `${flowList[0]} until ${_format_gathright_date(dateList[dateList.length - 1])}`;
+        text = `${flowList[0]} until ${formatGathrightDate(dateList[dateList.length - 1])}`;
     }
     else {
         // One release per line, e.g. "7/24: 246 cfs"
-        text = dateList.map((d, i) => `${_format_gathright_date(d)}: ${cfsOnly(flowList[i])} cfs`).join("\n");
+        text = dateList.map((d, i) => `${formatGathrightDate(d)}: ${cfsOnly(flowList[i])} cfs`).join("\n");
     }
     // Color from tomorrow when available, else first cell
     const colorIdx = n > 1 ? 1 : 0;
@@ -80,7 +80,7 @@ function getGathrightData(url = GATHRIGHT_PROXY) {
                         flows.push(flowText);
                     }
                 }
-                return _format_gathright_schedule(dates, flows);
+                return formatGathrightSchedule(dates, flows);
             }
             return { text: "--", value: undefined };
         }
@@ -98,19 +98,19 @@ function getMoomawData(url = MOOMAW_PROXY) {
                 return undefined;
             }
             const today = new Date();
-            let date_idx = (Date.UTC(today.getFullYear(), today.getMonth(), today.getDate()) - Date.UTC(today.getFullYear(), 0, 0)) / 24 / 60 / 60 / 1000 - 1;
+            let dateIdx = (Date.UTC(today.getFullYear(), today.getMonth(), today.getDate()) - Date.UTC(today.getFullYear(), 0, 0)) / 24 / 60 / 60 / 1000 - 1;
             // Find the most recent date that has a height measurement here
-            while (date_idx >= 0) {
-                let level = data.charts[date_idx]?.[today.getFullYear()];
+            while (dateIdx >= 0) {
+                let level = data.charts[dateIdx]?.[today.getFullYear()];
                 if (level != undefined) {
                     return level;
                 }
                 // If the latest level is none, try the day before
-                date_idx--;
+                dateIdx--;
             }
             return data.charts[0]?.[today.getFullYear()];
         }
-    )
+    );
 }
 
 export function getJacksonData(site) {
