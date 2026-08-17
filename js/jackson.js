@@ -7,7 +7,7 @@ const CORS_PROXY = "https://corsproxy.io/?url=";
 
 // Gathright projected releases
 const GATHRIGHT_URL = "https://www.nao-wc.usace.army.mil/nao/projected_Q.html";
-const GATHRIGHT_PROXY = CORS_PROXY + GATHRIGHT_URL;
+const GATHRIGHT_PROXY = CORS_PROXY + encodeURIComponent(GATHRIGHT_URL);
 
 function formatGathrightDate(dateText) {
     const date = new Date(`${dateText.slice(0, 2)} ${dateText.slice(2, 5)} ${dateText.slice(5)}`);
@@ -89,7 +89,7 @@ function getGathrightData(url = GATHRIGHT_PROXY) {
 
 // Lake Moomaw level data
 const MOOMAW_JSON_URL = "https://moomaw.lakesonline.com/LevelDataJSON.asp?SiteID=VA006";
-const MOOMAW_PROXY = CORS_PROXY + MOOMAW_JSON_URL;
+const MOOMAW_PROXY = CORS_PROXY + encodeURIComponent(MOOMAW_JSON_URL);
 
 function getMoomawData(url = MOOMAW_PROXY) {
     return fetch(url).then(response => response.json()).then(
