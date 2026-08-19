@@ -1,6 +1,6 @@
 "use strict";
 
-import { parseFlowNumber, cfsOnly } from "./river.js";
+import { parseFlowNumber, cfsOnly } from "https://cdn.jsdelivr.net/gh/bboudaoud/RiverDashboard@main/js/river.js";
 
 // Use this to avoid CORS issues from the sites below
 const CORS_PROXY = "https://corsproxy.io/?url=";

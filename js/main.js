@@ -1,12 +1,8 @@
 "use strict";
 
-import { startDashboard } from "./river.js";
+import { boot } from "https://cdn.jsdelivr.net/gh/bboudaoud/RiverDashboard@main/js/main.js";
 import { getJacksonData as getCustomData } from "./jackson.js";
 
-try {
-    await startDashboard("./jackson.json", getCustomData);
-}
-catch (error) {
-    console.error(error);
-    document.body.textContent = `Failed to start dashboard: ${error.message}`;
-}
+// boot() pulls in the shared stylesheet and reports startup errors itself.
+// Config path is resolved against the page, not this script.
+await boot("./jackson.json", getCustomData);
