@@ -2,12 +2,12 @@
 
 import { parseFlowNumber, cfsOnly } from "https://cdn.jsdelivr.net/gh/bboudaoud/RiverDashboard@main/js/river.js";
 
-// Use this to avoid CORS issues from the sites below
-const CORS_PROXY = "https://corsproxy.io/?url=";
+// Use this to avoid CORS issues from the Gathright release page
+const CORS_PROXY = "https://proxy.cors.sh/";
 
 // Gathright projected releases
 const GATHRIGHT_URL = "https://www.nao-wc.usace.army.mil/nao/projected_Q.html";
-const GATHRIGHT_PROXY = CORS_PROXY + encodeURIComponent(GATHRIGHT_URL);
+const GATHRIGHT_PROXY = CORS_PROXY + GATHRIGHT_URL;
 
 function formatGathrightDate(dateText) {
     const date = new Date(`${dateText.slice(0, 2)} ${dateText.slice(2, 5)} ${dateText.slice(5)}`);
@@ -88,39 +88,67 @@ function getGathrightData(url = GATHRIGHT_PROXY) {
 }
 
 // Lake Moomaw level data
-const MOOMAW_JSON_URL = "https://moomaw.lakesonline.com/LevelDataJSON.asp?SiteID=VA006";
-const MOOMAW_PROXY = CORS_PROXY + encodeURIComponent(MOOMAW_JSON_URL);
+const MOOMAW_API_URL = "https://cwms-data.usace.army.mil/cwms-data/timeseries?office=NAO";
+const MOOMAW_LEVEL_URL = `${MOOMAW_API_URL}&name=Moomaw.Elev.Inst.30Minutes.0.Rev-DCP&unit=ft`;
+const MOOMAW_STORAGE_URL = `${MOOMAW_API_URL}&name=Moomaw.Stor.Inst.30Minutes.0.Rev-DCP&unit=ac-ft`;
 
-function getMoomawData(url = MOOMAW_PROXY) {
-    return fetch(url).then(response => response.json()).then(
-        data => {
-            if (!Array.isArray(data?.charts) || data.charts.length === 0) {
-                return undefined;
-            }
-            const today = new Date();
-            let dateIdx = (Date.UTC(today.getFullYear(), today.getMonth(), today.getDate()) - Date.UTC(today.getFullYear(), 0, 0)) / 24 / 60 / 60 / 1000 - 1;
-            // Find the most recent date that has a height measurement here
-            while (dateIdx >= 0) {
-                let level = data.charts[dateIdx]?.[today.getFullYear()];
-                if (level != undefined) {
-                    return level;
-                }
-                // If the latest level is none, try the day before
-                dateIdx--;
-            }
-            return data.charts[0]?.[today.getFullYear()];
+function getLatestValue(data) {
+    if (!Array.isArray(data?.values)) {
+        return undefined;
+    }
+    for (let i = data.values.length - 1; i >= 0; i--) {
+        const value = data.values[i]?.[1];
+        if (Number.isFinite(value)) {
+            return value;
+        }
+    }
+    return undefined;
+}
+
+function getMoomawData() {
+    const begin = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+    const options = {
+        headers: { Accept: "application/json;version=2" }
+    };
+    return Promise.all([
+        fetch(`${MOOMAW_LEVEL_URL}&begin=${encodeURIComponent(begin)}`, options).then(response => response.json()),
+        fetch(`${MOOMAW_STORAGE_URL}&begin=${encodeURIComponent(begin)}`, options).then(response => response.json())
+    ]).then(
+        ([levelData, storageData]) => {
+            const level = getLatestValue(levelData);
+            return {
+                level: Number.isFinite(level) ? Math.round(level * 100) / 100 : undefined,
+                storage: getLatestValue(storageData)
+            };
         }
     );
+}
+
+function updateMoomawPercentage(site, storage) {
+    const fullStorage = site.pool?.fullStorageAcFt;
+    if (!Number.isFinite(storage) || !Number.isFinite(fullStorage)) {
+        return;
+    }
+    const percentage = storage / fullStorage * 100;
+    requestAnimationFrame(() => {
+        const fillPercentage = document.getElementById(`${site.name.replaceAll(" ", "_")}_fillPct`);
+        if (fillPercentage == undefined) {
+            return;
+        }
+        fillPercentage.textContent = `${Math.max(0, percentage).toFixed(0)}%`;
+        fillPercentage.style.width = `${Math.max(0, Math.min(100, percentage))}%`;
+    });
 }
 
 export function getJacksonData(site) {
     switch (site.source) {
         case "moomaw":
-            return getMoomawData().then(level => {
-                if (level == undefined) {
+            return getMoomawData().then(data => {
+                if (data.level == undefined) {
                     return undefined;
                 }
-                return { level };
+                updateMoomawPercentage(site, data.storage);
+                return { level: data.level };
             });
         case "gathright":
             return getGathrightData().then(extra => ({ extra }));

@@ -11,6 +11,14 @@
       "warm": 65,
       "hot": 70,
       "extreme": 75
+    },
+    "lakeColors": {
+      "veryLow": "darkred",
+      "low": "darkorange",
+      "full": "green",
+      "high": "darkgreen",
+      "flood": "red",
+      "above": "darkred"
     }
   },
   
@@ -34,12 +42,13 @@
       "type": "lake",
       "name": "Lake Moomaw",
       "source": "moomaw",
-      "url": "https://moomaw.lakesonline.com/Level/",
+      "url": "https://water.sec.usace.army.mil/overview/nao/locations/moomaw",
       "pool": {
-        "full": 1582.0,
-        "high": 1587.0,
-        "low": 1572.0,
         "flood": 1610.0,
+        "high": 1587.0,
+        "full": 1582.0,
+        "low": 1572.0,
+        "veryLow": 1567.0,
         "fullStorageAcFt": 123700,
         "surfaceAcres": 2530
       }
