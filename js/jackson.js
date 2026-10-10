@@ -132,10 +132,11 @@ function updateMoomawPercentage(site, storage) {
     const percentage = storage / fullStorage * 100;
     requestAnimationFrame(() => {
         const fillPercentage = document.getElementById(`${site.name.replaceAll(" ", "_")}_fillPct`);
-        if (fillPercentage == undefined) {
+        const fillLabel = document.getElementById(`${site.name.replaceAll(" ", "_")}_fillLabel`);
+        if (fillPercentage == undefined || fillLabel == undefined) {
             return;
         }
-        fillPercentage.textContent = `${Math.max(0, percentage).toFixed(0)}%`;
+        fillLabel.textContent = `${Math.max(0, percentage).toFixed(0)}%`;
         fillPercentage.style.width = `${Math.max(0, Math.min(100, percentage))}%`;
     });
 }
