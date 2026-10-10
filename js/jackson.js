@@ -1,6 +1,6 @@
 "use strict";
 
-import { parseFlowNumber, cfsOnly } from "https://cdn.jsdelivr.net/gh/bboudaoud/RiverDashboard@main/js/river.js";
+import { parseFlowNumber, cfsOnly } from "https://bboudaoud.github.io/RiverDashboard/js/river.js";
 
 // Use this to avoid CORS issues from the Gathright release page
 const CORS_PROXY = "https://proxy.cors.sh/";
