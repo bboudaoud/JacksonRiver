@@ -3,7 +3,8 @@
 import { parseFlowNumber, cfsOnly } from "https://bboudaoud.github.io/RiverDashboard/js/river.js";
 
 // Use this to avoid CORS issues from the Gathright release page
-const CORS_PROXY = "https://proxy.cors.sh/";
+const CORS_PROXY = "https://r.jina.ai/";
+const CORS_PROXY_HEADERS = { "X-Return-Format": "html" };
 
 // Gathright projected releases
 const GATHRIGHT_URL = "https://www.nao-wc.usace.army.mil/nao/projected_Q.html";
@@ -37,7 +38,7 @@ function formatGathrightSchedule(dates, flows) {
 }
 
 function getGathrightData(url = GATHRIGHT_PROXY) {
-    return fetch(url).then(response => response.text()).then(
+    return fetch(url, { headers: CORS_PROXY_HEADERS }).then(response => response.text()).then(
         text => {
             const parser = new DOMParser();
             const doc = parser.parseFromString(text, "text/html");
@@ -124,23 +125,6 @@ function getMoomawData() {
     );
 }
 
-function updateMoomawPercentage(site, storage) {
-    const fullStorage = site.pool?.fullStorageAcFt;
-    if (!Number.isFinite(storage) || !Number.isFinite(fullStorage)) {
-        return;
-    }
-    const percentage = storage / fullStorage * 100;
-    requestAnimationFrame(() => {
-        const fillPercentage = document.getElementById(`${site.name.replaceAll(" ", "_")}_fillPct`);
-        const fillLabel = document.getElementById(`${site.name.replaceAll(" ", "_")}_fillLabel`);
-        if (fillPercentage == undefined || fillLabel == undefined) {
-            return;
-        }
-        fillLabel.textContent = `${Math.max(0, percentage).toFixed(0)}%`;
-        fillPercentage.style.width = `${Math.max(0, Math.min(100, percentage))}%`;
-    });
-}
-
 export function getJacksonData(site) {
     switch (site.source) {
         case "moomaw":
@@ -148,8 +132,7 @@ export function getJacksonData(site) {
                 if (data.level == undefined) {
                     return undefined;
                 }
-                updateMoomawPercentage(site, data.storage);
-                return { level: data.level };
+                return { level: data.level, storageAcFt: data.storage };
             });
         case "gathright":
             return getGathrightData().then(extra => ({ extra }));
